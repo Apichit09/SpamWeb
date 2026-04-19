@@ -1,0 +1,9 @@
+Flask
+pandas
+numpy
+joblib
+scikit-learn==1.6.1
+pythainlp
+lime
+imbalanced-learn
+python-dotenv
