@@ -1,7 +1,7 @@
 import os
 import csv
 from datetime import datetime
-
+from utils.drive_storage import upload_or_update_file
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -19,6 +19,7 @@ def init_history_file():
 
 def save_history(message_text: str, predicted_label: str, confidence_score: float):
     init_history_file()
+
     with open(HISTORY_FILE, "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -27,6 +28,12 @@ def save_history(message_text: str, predicted_label: str, confidence_score: floa
             confidence_score,
             datetime.now().strftime("%d/%m/%Y %H:%M")
         ])
+
+    # อัปโหลดขึ้น Google Drive หลังบันทึกเสร็จ
+    try:
+        upload_or_update_file(HISTORY_FILE, "prediction_history.csv")
+    except Exception as e:
+        print("DRIVE UPLOAD ERROR:", e)
 
 
 def load_history():

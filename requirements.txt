@@ -7,3 +7,8 @@ pythainlp
 lime
 imbalanced-learn
 python-dotenv
+gunicorn
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib
