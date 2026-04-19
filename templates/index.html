@@ -4,10 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ระบบตรวจจับข้อความที่เป็นสแปม</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div class="app">
@@ -34,13 +40,10 @@
             วางข้อความที่ต้องการตรวจสอบ แล้วกดปุ่มตรวจสอบเพื่อรับผลการวิเคราะห์
           </p>
 
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="flash-message flash-{{ category }}">{{ message }}</div>
-              {% endfor %}
-            {% endif %}
-          {% endwith %}
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if
+          messages %} {% for category, message in messages %}
+          <div class="flash-message flash-{{ category }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
 
           <form action="{{ url_for('predict') }}" method="post">
             <div class="field-label">
@@ -64,7 +67,9 @@
             <div class="actions">
               <div class="action-note">ผลลัพธ์จะแสดงในหน้าถัดไป</div>
               <div class="button-group">
-                <button class="btn btn-secondary" type="reset" id="clear-btn">ล้างข้อความ</button>
+                <button class="btn btn-secondary" type="reset" id="clear-btn">
+                  ล้างข้อความ
+                </button>
                 <button class="btn btn-primary" type="submit">ตรวจสอบ</button>
               </div>
             </div>
@@ -90,8 +95,13 @@
             <div class="result-preview">
               <div class="result-box">
                 <div class="result-title">ผลการจำแนก</div>
-                <div class="result-value primary">Spam / Not Spam</div>
-                <div class="result-desc">ระบบจำแนกประเภทของข้อความที่ป้อนเข้ามา</div>
+                <div class="result-value primary">
+                  <span class="textspam">Spam</span> /
+                  <span class="textnotspam">Not Spam</span>
+                </div>
+                <div class="result-desc">
+                  ระบบจำแนกประเภทของข้อความที่ป้อนเข้ามา
+                </div>
               </div>
 
               <div class="result-box">

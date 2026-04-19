@@ -1,8 +1,8 @@
 :root {
   --bg: #222831;
-  --panel: #393E46;
-  --primary: #00ADB5;
-  --text: #EEEEEE;
+  --panel: #393e46;
+  --primary: #00adb5;
+  --text: #eeeeee;
   --muted: #bfc6cd;
   --border: rgba(238, 238, 238, 0.12);
   --soft: rgba(0, 173, 181, 0.12);
@@ -21,12 +21,29 @@
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(0, 173, 181, 0.12), transparent 26%),
-    radial-gradient(circle at bottom right, rgba(0, 173, 181, 0.08), transparent 24%),
+    radial-gradient(
+      circle at top left,
+      rgba(0, 173, 181, 0.12),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(0, 173, 181, 0.08),
+      transparent 24%
+    ),
     var(--bg);
   color: var(--text);
   min-height: 100vh;
   padding: 24px;
+}
+.textspam {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.textnotspam {
+  color: #31d17c;
+  font-weight: 600;
 }
 
 a {
@@ -373,7 +390,11 @@ textarea:focus,
 }
 
 .result-card {
-  background: linear-gradient(180deg, rgba(42, 49, 58, 1) 0%, rgba(34, 40, 49, 1) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(42, 49, 58, 1) 0%,
+    rgba(34, 40, 49, 1) 100%
+  );
   border: 1px solid var(--border);
   border-radius: 22px;
   padding: 22px;
@@ -569,5 +590,56 @@ textarea:focus,
 
   textarea {
     height: 280px;
+  }
+  .lime-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .lime-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+  }
+
+  .lime-word {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+    word-break: break-word;
+  }
+
+  .lime-weight {
+    min-width: 72px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 999px;
+  }
+
+  .lime-weight.positive {
+    background: rgba(255, 107, 107, 0.14);
+    color: var(--danger);
+    border: 1px solid rgba(255, 107, 107, 0.28);
+  }
+
+  .lime-weight.negative {
+    background: rgba(49, 209, 124, 0.14);
+    color: var(--success);
+    border: 1px solid rgba(49, 209, 124, 0.28);
+  }
+
+  .lime-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
   }
 }
