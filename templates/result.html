@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ผลการวิเคราะห์</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">AI</div>
+        <div class="brand-text">
+          <h1>เว็บแอปพลิเคชันตรวจจับข้อความสแปม</h1>
+          <p>หน้าจอแสดงผลการวิเคราะห์</p>
+        </div>
+      </div>
+
+      <div class="system-status">
+        <div class="status-dot"></div>
+        <span>ระบบพร้อมใช้งาน</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card main-card">
+        <div class="eyebrow">Analysis Result</div>
+        <h2>ผลการวิเคราะห์ข้อความ</h2>
+        <p class="subtext">ระบบได้ประมวลผลข้อความและสรุปผลการจำแนกพร้อมค่าความเชื่อมั่น</p>
+
+        <div class="label">ข้อความที่ตรวจสอบ</div>
+        <div class="message-box">{{ message }}</div>
+
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-title">ผลการจำแนก</div>
+            <div class="result-value {% if prediction == 'Spam' %}spam{% else %}safe{% endif %}">
+              {{ prediction }}
+            </div>
+            <div class="result-desc">
+              {% if prediction == 'Spam' %}
+                ข้อความนี้ถูกจัดอยู่ในกลุ่มข้อความสแปม
+              {% else %}
+                ข้อความนี้ถูกจัดอยู่ในกลุ่มข้อความทั่วไป
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="result-card">
+            <div class="result-title">ค่าความเชื่อมั่น</div>
+            <div class="result-value score">{{ confidence }}%</div>
+            <div class="result-desc">ระบบประเมินผลด้วยความมั่นใจในระดับนี้</div>
+          </div>
+        </div>
+
+        <div class="explain-box">
+          <h3>คำอธิบายผลลัพธ์</h3>
+          <p>{{ explanation }}</p>
+        </div>
+
+        <div class="actions">
+          <a class="btn btn-secondary" href="{{ url_for('history') }}">ดูประวัติย้อนหลัง</a>
+          <a class="btn btn-primary" href="{{ url_for('index') }}">ตรวจสอบใหม่</a>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="card side-card">
+          <h3>เมนูระบบ</h3>
+          <div class="menu-list">
+            <a class="menu-item" href="{{ url_for('index') }}">
+              <span>หน้าหลัก</span>
+            </a>
+            <div class="menu-item active">
+              <span>หน้าผลการวิเคราะห์</span>
+              <span class="menu-tag">ตอนนี้</span>
+            </div>
+            <a class="menu-item" href="{{ url_for('history') }}">
+              <span>หน้าประวัติย้อนหลัง</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="card side-card">
+          <h3>ประวัติล่าสุด</h3>
+          <div class="mini-history">
+            {% if recent_history %}
+              {% for item in recent_history %}
+                <div class="history-row">
+                  <div class="top">
+                    <span class="tag">{{ item.predicted_label }}</span>
+                    <span>{{ item.created_at }}</span>
+                  </div>
+                  <p>{{ item.message_text[:80] }}{% if item.message_text|length > 80 %}...{% endif %}</p>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="history-row">
+                <p>ยังไม่มีประวัติการตรวจสอบ</p>
+              </div>
+            {% endif %}
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+</body>
+</html>

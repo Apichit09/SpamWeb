@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ประวัติการตรวจสอบย้อนหลัง</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">AI</div>
+        <div class="brand-text">
+          <h1>เว็บแอปพลิเคชันตรวจจับข้อความสแปม</h1>
+          <p>หน้าจอประวัติการตรวจสอบย้อนหลัง</p>
+        </div>
+      </div>
+
+      <div class="system-status">
+        <div class="status-dot"></div>
+        <span>ระบบพร้อมใช้งาน</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card main-card">
+        <div class="eyebrow">History</div>
+        <h2>ประวัติการตรวจสอบย้อนหลัง</h2>
+        <p class="subtext">แสดงรายการข้อความที่เคยตรวจสอบ พร้อมผลการจำแนก ค่าความเชื่อมั่น และเวลาที่บันทึก</p>
+
+        <form class="toolbar" method="get" action="{{ url_for('history') }}">
+          <div class="search-box">
+            <input type="text" name="q" value="{{ q or '' }}" placeholder="ค้นหาข้อความที่เคยตรวจสอบ..." />
+          </div>
+          <div class="filter-box">
+            <button class="chip" type="submit" name="label" value="">ทั้งหมด</button>
+            <button class="chip" type="submit" name="label" value="Spam">Spam</button>
+            <button class="chip" type="submit" name="label" value="Not Spam">Not Spam</button>
+          </div>
+        </form>
+
+        <div class="history-table">
+          {% if history_rows %}
+            {% for item in history_rows %}
+              <div class="history-row">
+                <div class="history-head">
+                  <div class="message-text">{{ item.message_text }}</div>
+                  <div>
+                    <span class="label-badge {% if item.predicted_label == 'Spam' %}label-spam{% else %}label-safe{% endif %}">
+                      {{ item.predicted_label }}
+                    </span>
+                  </div>
+                  <div class="score-text">{{ item.confidence_score }}%</div>
+                  <div class="time-text">{{ item.created_at }}</div>
+                </div>
+                <div class="history-desc">
+                  รายการข้อความที่เคยผ่านการตรวจสอบและบันทึกไว้ในระบบ
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="history-row">
+              <div class="history-desc">ยังไม่มีข้อมูลประวัติ หรือไม่พบผลลัพธ์ที่ตรงกับการค้นหา</div>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="card side-card">
+          <h3>เมนูระบบ</h3>
+          <div class="menu-list">
+            <a class="menu-item" href="{{ url_for('index') }}">
+              <span>หน้าหลัก</span>
+            </a>
+            <a class="menu-item" href="{{ url_for('index') }}">
+              <span>หน้าผลการวิเคราะห์</span>
+            </a>
+            <div class="menu-item active">
+              <span>หน้าประวัติย้อนหลัง</span>
+              <span class="menu-tag">ตอนนี้</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card side-card">
+          <h3>ข้อมูลสรุป</h3>
+          <div class="summary-list">
+            <div class="summary-box">
+              <strong>จำนวนรายการ</strong>
+              <span>{{ total_count }} รายการ</span>
+            </div>
+            <div class="summary-box">
+              <strong>Spam</strong>
+              <span>{{ spam_count }} รายการ</span>
+            </div>
+            <div class="summary-box">
+              <strong>Not Spam</strong>
+              <span>{{ not_spam_count }} รายการ</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ระบบตรวจจับข้อความที่เป็นสแปม</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-icon">AI</div>
+          <div class="brand-text">
+            <h1>เว็บแอปพลิเคชันตรวจจับข้อความสแปม</h1>
+            <p>หน้าจอหลักสำหรับกรอกข้อความและเริ่มการตรวจสอบ</p>
+          </div>
+        </div>
+
+        <div class="system-status">
+          <div class="status-dot"></div>
+          <span>ระบบพร้อมใช้งาน</span>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="card main-card">
+          <div class="eyebrow">Spam Message Detection</div>
+          <h2>ตรวจสอบข้อความ</h2>
+          <p class="subtext">
+            วางข้อความที่ต้องการตรวจสอบ แล้วกดปุ่มตรวจสอบเพื่อรับผลการวิเคราะห์
+          </p>
+
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+
+          <form action="{{ url_for('predict') }}" method="post">
+            <div class="field-label">
+              <span>ข้อความที่ต้องการตรวจสอบ</span>
+              <span>รองรับข้อความภาษาไทย</span>
+            </div>
+
+            <div class="textarea-wrap">
+              <textarea
+                id="message"
+                name="message"
+                placeholder="ตัวอย่าง: คุณได้รับรางวัลพิเศษ กรุณากดลิงก์เพื่อยืนยันสิทธิ์ภายในวันนี้..."
+                maxlength="2000"
+                required
+              ></textarea>
+              <div class="input-meta">
+                <span id="char-count">0</span>/2000 ตัวอักษร
+              </div>
+            </div>
+
+            <div class="actions">
+              <div class="action-note">ผลลัพธ์จะแสดงในหน้าถัดไป</div>
+              <div class="button-group">
+                <button class="btn btn-secondary" type="reset" id="clear-btn">ล้างข้อความ</button>
+                <button class="btn btn-primary" type="submit">ตรวจสอบ</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <aside class="side-panel">
+          <section class="card side-card">
+            <h3>เมนูระบบ</h3>
+            <div class="menu-list">
+              <a class="menu-item active" href="{{ url_for('index') }}">
+                <span>หน้าหลัก</span>
+                <span class="menu-tag">ตอนนี้</span>
+              </a>
+              <a class="menu-item" href="{{ url_for('history') }}">
+                <span>หน้าประวัติย้อนหลัง</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="card side-card">
+            <h3>ตัวอย่างผลลัพธ์</h3>
+            <div class="result-preview">
+              <div class="result-box">
+                <div class="result-title">ผลการจำแนก</div>
+                <div class="result-value primary">Spam / Not Spam</div>
+                <div class="result-desc">ระบบจำแนกประเภทของข้อความที่ป้อนเข้ามา</div>
+              </div>
+
+              <div class="result-box">
+                <div class="result-title">ค่าความเชื่อมั่น</div>
+                <div class="result-value">0 - 100%</div>
+                <div class="result-desc">แสดงระดับความมั่นใจของโมเดล</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card side-card">
+            <h3>รายละเอียด</h3>
+            <div class="info-box">
+              <p>
+                หน้านี้ใช้สำหรับกรอกหรือวางข้อความที่ต้องการตรวจสอบ
+                ก่อนส่งเข้าสู่ระบบเพื่อประมวลผลและแสดงผลลัพธ์
+              </p>
+            </div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
