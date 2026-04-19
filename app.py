@@ -1,8 +1,11 @@
 import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash
 
 from utils.predictor import predictor
 from utils.history import save_history, load_history
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "spam-detection-secret-key")

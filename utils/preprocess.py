@@ -31,7 +31,7 @@ def create_features(df_input: pd.DataFrame) -> pd.DataFrame:
     short_url_pattern = r"bit\.ly|cutt\.ly|t\.co|rebrand\.ly|shorturl\.asia|line\.me|lin\.ee"
     df_out["has_short_url"] = df_out["message"].str.contains(short_url_pattern, case=False, regex=True).astype(int)
 
-    phone_pattern = r"(\d{2,3}-\d{3,4}-\d{4}|\d{9,10})"
+    phone_pattern = r"(?:\d{2,3}-\d{3,4}-\d{4}|\d{9,10})"
     df_out["has_phone"] = df_out["message"].str.contains(phone_pattern, regex=True).astype(int)
 
     df_out["has_line_keyword"] = df_out["message"].str.contains(r"line|ไลน์|แอดไลน์", case=False, regex=True).astype(int)

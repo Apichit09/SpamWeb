@@ -1,61 +1,65 @@
 import os
+import json
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# เปลี่ยน SCOPES เป็นของ Spreadsheets
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
-SERVICE_ACCOUNT_FILE = os.path.join(BASE_DIR, "service_account.json")
-SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-
-# ใส่ Folder ID ของ Google Drive
-DRIVE_FOLDER_ID = "PUT_YOUR_FOLDER_ID_HERE"
-
-
-def get_drive_service():
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE,
-        scopes=SCOPES
-    )
-    service = build("drive", "v3", credentials=credentials)
-    return service
-
-
-def find_file_in_folder(service, filename, folder_id):
-    query = (
-        f"name = '{filename}' and "
-        f"'{folder_id}' in parents and "
-        f"trashed = false"
-    )
-    results = service.files().list(
-        q=query,
-        fields="files(id, name)"
-    ).execute()
-
-    files = results.get("files", [])
-    return files[0] if files else None
-
-
-def upload_or_update_file(local_file_path, drive_filename):
-    service = get_drive_service()
-
-    existing_file = find_file_in_folder(service, drive_filename, DRIVE_FOLDER_ID)
-    media = MediaFileUpload(local_file_path, mimetype="text/csv", resumable=True)
-
-    if existing_file:
-        updated = service.files().update(
-            fileId=existing_file["id"],
-            media_body=media
-        ).execute()
-        return updated
+def get_sheets_service():
+    service_account_json = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+    
+    if service_account_json:
+        # โหลดจาก Environment (บรรทัดเดียว)
+        info = json.loads(service_account_json.strip(), strict=False)
+        creds = service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
     else:
-        file_metadata = {
-            "name": drive_filename,
-            "parents": [DRIVE_FOLDER_ID]
-        }
-        created = service.files().create(
-            body=file_metadata,
-            media_body=media,
-            fields="id, name"
+        # โหลดจากไฟล์ service_account.json ในเครื่อง
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(current_dir, "service_account.json")
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"ไม่พบไฟล์ Key ที่: {path}")
+        creds = service_account.Credentials.from_service_account_file(path, scopes=SCOPES)
+        
+    return build("sheets", "v4", credentials=creds)
+
+# แก้ไขชื่อฟังก์ชันให้เป็นชื่อเดิม (เพื่อให้ไฟล์ history.py ไม่พัง)
+def upload_or_update_file(local_file_path, drive_filename):
+    """
+    ฟังก์ชันนี้จะถูกเรียกจาก history.py 
+    เราจะเปลี่ยนจากการอัปโหลดไฟล์ เป็นการอ่านค่าล่าสุดไปลง Google Sheets แทน
+    """
+    import pandas as pd
+    
+    spreadsheet_id = os.getenv("GOOGLE_SHEET_ID")
+    if not spreadsheet_id:
+        print("กรุณาระบุ GOOGLE_SHEET_ID ใน .env")
+        return None
+
+    try:
+        # อ่านไฟล์ CSV ที่เพิ่งบันทึกลงเครื่องมาดูแถวล่าสุด
+        df = pd.read_csv(local_file_path)
+        if df.empty:
+            return None
+            
+        # เอาข้อมูลแถวสุดท้าย (Latest Prediction) แปลงเป็น List
+        last_row = df.iloc[-1].tolist()
+        
+        # ส่งไปบันทึกลง Google Sheets
+        service = get_sheets_service()
+        range_name = "Sheet1!A1" 
+        body = {'values': [last_row]}
+        
+        result = service.spreadsheets().values().append(
+            spreadsheetId=spreadsheet_id,
+            range=range_name,
+            valueInputOption="USER_ENTERED",
+            insertDataOption="INSERT_ROWS",
+            body=body
         ).execute()
-        return created
+        
+        print(f"บันทึกลง Google Sheets เรียบร้อย (Row Added)")
+        return result
+    except Exception as e:
+        print(f"Google Sheets Error: {e}")
+        raise

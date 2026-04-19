@@ -134,8 +134,8 @@
                   <span>{{ item.created_at }}</span>
                 </div>
                 <p>
-                  {{ item.message_text[:80] }}{% if item.message_text|length >
-                  80 %}...{% endif %}
+                  {{ item.get('message_text', 'ไม่มีข้อมูลข้อความ')[:80] }}{% if
+                  item.get('message_text', '')|length > 80 %}...{% endif %}
                 </p>
               </div>
               {% endfor %} {% else %}
