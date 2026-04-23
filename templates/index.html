@@ -56,11 +56,15 @@
                 id="message"
                 name="message"
                 placeholder="ตัวอย่าง: คุณได้รับรางวัลพิเศษ กรุณากดลิงก์เพื่อยืนยันสิทธิ์ภายในวันนี้..."
-                maxlength="2000"
+                maxlength="255"
                 required
+                oninvalid="
+                  this.setCustomValidity('กรุณากรอกข้อความก่อนทำการตรวจสอบ')
+                "
+                oninput="this.setCustomValidity('')"
               ></textarea>
               <div class="input-meta">
-                <span id="char-count">0</span>/2000 ตัวอักษร
+                <span id="char-count">0</span>/255 ตัวอักษร
               </div>
             </div>
 
